@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Student Information Form</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            margin: 0;
+            padding: 40px 40px;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            background-color: #2e2e2e;
+            padding: 30px 50px;
+            border-radius: 0;
+            box-shadow: none;
+            width: 100%;
+            max-width: 100%;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #ccc;
+            font-weight: 700;
+            font-size: 2.5rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px 40px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1.5px solid #555;
+            background-color: #121212;
+            color: #ddd;
+            font-size: 1rem;
+            outline-offset: 3px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input[type="number"]::placeholder,
+        select::placeholder {
+            color: #777;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            border-color: #888;
+            box-shadow: 0 0 10px 2px rgba(136, 136, 136, 0.5);
+            background-color: #1a1a1a;
+            color: #eee;
+        }
+
+        input[type="submit"] {
+            grid-column: 1 / -1;
+            padding: 14px 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            background: #444;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: inset 0 -3px 0 #222;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #666;
+            box-shadow: 0 0 12px 2px #999, inset 0 -3px 0 #333;
+        }
+
+        /* Responsive - single column on narrow screens */
+        @media (max-width: 700px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px 20px;
+                min-height: auto;
+            }
+        }
+
+        /* Prediction result styling */
+        .prediction {
+            margin-top: 35px;
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #f1f1f1;
+            letter-spacing: 0.04em;
+            background-color: #444444;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.15);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>How much you will score</h1>
+        <form action="/predict" method="POST" autocomplete="off">
+            <div>
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required min="0"
+                       value="{{ form_values.age if form_values is defined else '' }}" />
+            </div>
+            <div>
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="" disabled {% if not (form_values is defined and form_values.gender) %}selected{% endif %}>Choose Gender</option>
+                    <option value="Female" {% if form_values is defined and form_values.gender == 'Female' %}selected{% endif %}>Female</option>
+                    <option value="Male" {% if form_values is defined and form_values.gender == 'Male' %}selected{% endif %}>Male</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="study_hours_per_day">Study Hours Per Day:</label>
+                <input type="number" step="0.1" id="study_hours_per_day" name="study_hours_per_day" required min="0"
+                       value="{{ form_values.study_hours_per_day if form_values is defined else '' }}" />
+            </div>
+            <div>
+                <label for="social_media_hours">Social Media Hours:</label>
+                <input type="number" step="0.1" id="social_media_hours" name="social_media_hours" required min="0"
+                       value="{{ form_values.social_media_hours if form_values is defined else '' }}" />
+            </div>
+
+            <div>
+                <label for="netflix_hours">Netflix Hours:</label>
+                <input type="number" step="0.1" id="netflix_hours" name="netflix_hours" required min="0"
+                       value="{{ form_values.netflix_hours if form_values is defined else '' }}" />
+            </div>
+            <div>
+                <label for="part_time_job">Part-Time Job:</label>
+                <select id="part_time_job" name="part_time_job" required>
+                    <option value="" disabled {% if not (form_values is defined and form_values.part_time_job) %}selected{% endif %}>Select Option</option>
+                    <option value="No" {% if form_values is defined and form_values.part_time_job == 'No' %}selected{% endif %}>No</option>
+                    <option value="Yes" {% if form_values is defined and form_values.part_time_job == 'Yes' %}selected{% endif %}>Yes</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="attendance_percentage">Attendance Percentage:</label>
+                <input type="number" step="0.1" id="attendance_percentage" name="attendance_percentage" required min="0" max="100"
+                       value="{{ form_values.attendance_percentage if form_values is defined else '' }}" />
+            </div>
+            <div>
+                <label for="sleep_hours">Sleep Hours:</label>
+                <input type="number" step="0.1" id="sleep_hours" name="sleep_hours" required min="0"
+                       value="{{ form_values.sleep_hours if form_values is defined else '' }}" />
+            </div>
+
+            <div>
+                <label for="diet_quality">Diet Quality:</label>
+                <select id="diet_quality" name="diet_quality" required>
+                    <option value="" disabled {% if not (form_values is defined and form_values.diet_quality) %}selected{% endif %}>Select Option</option>
+                    <option value="Fair" {% if form_values is defined and form_values.diet_quality == 'Fair' %}selected{% endif %}>Fair</option>
+                    <option value="Good" {% if form_values is defined and form_values.diet_quality == 'Good' %}selected{% endif %}>Good</option>
+                    <option value="Poor" {% if form_values is defined and form_values.diet_quality == 'Poor' %}selected{% endif %}>Poor</option>
+                </select>
+            </div>
+            <div>
+                <label for="exercise_frequency">Exercise Frequency (times per week):</label>
+                <input type="number" id="exercise_frequency" name="exercise_frequency" required min="0"
+                       value="{{ form_values.exercise_frequency if form_values is defined else '' }}" />
+            </div>
+
+            <div>
+                <label for="parental_education_level">Parental Education Level:</label>
+                <select id="parental_education_level" name="parental_education_level" required>
+                    <option value="" disabled {% if not (form_values is defined and form_values.parental_education_level) %}selected{% endif %}>Select Level</option>
+                    <option value="Uneducated" {% if form_values is defined and form_values.parental_education_level == 'Uneducated' %}selected{% endif %}>Uneducated</option>
+                    <option value="High School" {% if form_values is defined and form_values.parental_education_level == 'High School' %}selected{% endif %}>High School</option>
+                    <option value="Bachelor" {% if form_values is defined and form_values.parental_education_level == 'Bachelor' %}selected{% endif %}>Bachelor</option>
+                    <option value="Master" {% if form_values is defined and form_values.parental_education_level == 'Master' %}selected{% endif %}>Master</option>
+                    <option value="PhD" {% if form_values is defined and form_values.parental_education_level == 'PhD' %}selected{% endif %}>PhD</option>
+                </select>
+            </div>
+            <div>
+                <label for="internet_quality">Internet Quality:</label>
+                <select id="internet_quality" name="internet_quality" required>
+                    <option value="" disabled {% if not (form_values is defined and form_values.internet_quality) %}selected{% endif %}>Select Quality</option>
+                    <option value="Poor" {% if form_values is defined and form_values.internet_quality == 'Poor' %}selected{% endif %}>Poor</option>
+                    <option value="Average" {% if form_values is defined and form_values.internet_quality == 'Average' %}selected{% endif %}>Average</option>
+                    <option value="Good" {% if form_values is defined and form_values.internet_quality == 'Good' %}selected{% endif %}>Good</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="mental_health_rating">Mental Health Rating (1 to 10):</label>
+                <input type="number" id="mental_health_rating" name="mental_health_rating" required min="1" max="10"
+                       value="{{ form_values.mental_health_rating if form_values is defined else '' }}" />
+            </div>
+            <div>
+                <label for="extracurricular_participation">Extracurricular Participation:</label>
+                <select id="extracurricular_participation" name="extracurricular_participation" required>
+                    <option value="" disabled {% if not (form_values is defined and form_values.extracurricular_participation) %}selected{% endif %}>Select Option</option>
+                    <option value="No" {% if form_values is defined and form_values.extracurricular_participation == 'No' %}selected{% endif %}>No</option>
+                    <option value="Yes" {% if form_values is defined and form_values.extracurricular_participation == 'Yes' %}selected{% endif %}>Yes</option>
+                </select>
+            </div>
+
+            <input type="submit" value="Submit" />
+        </form>
+
+        {% if prediction %}
+        <p class="prediction">Prediction: {{ prediction }}</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>
+
