@@ -69,19 +69,13 @@ The model was trained using the [Student Habits vs Academic Performance](https:/
 ## 🚀 Getting Started
 
 ### 1️⃣ Clone the Repository
-    ```bash
-        git clone https://github.com/your-username/student-score-predictor.git
-        cd student-score-predictor
-    ```
+    git clone https://github.com/your-username/student-score-predictor.git
+    cd student-score-predictor
 
 ### 2️⃣ (Optional) Create and Activate a Virtual Environment
-    ```bash
-        pip install -r requirements.txt
-    ```
+    pip install -r requirements.txt
 ### 4️⃣ Run the Application
-    ```bash
-        python app.py
-    ```
+    python app.py
 ### 5️⃣ Open in Browser
     visit :
     http://127.0.0.1:5000
