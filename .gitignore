@@ -2,5 +2,15 @@
 /venv
 /.venv
 
-__pychache__
-/__pychache__
+__pycache__/
+*.pyc
+
+# ML artifacts
+artifacts/
+mlruns/
+
+# DVC (keep .dvc files, ignore cache)
+.dvc/cache/
+
+# Data outputs (raw data may be tracked via DVC)
+data/processed/

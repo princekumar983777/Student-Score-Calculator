@@ -1,81 +1,117 @@
-# 🎓 Student Score Predictor
+# 🎓 Student Exam Score Prediction (Production ML System)
 
-A user-friendly web application that predicts a student's academic score based on various lifestyle and personal factors. Built with Python and Flask, this tool allows students to interactively explore how changes in habits—like increasing study hours or improving sleep quality—can influence their academic performance.
+This repository contains a **production-grade ML system** that predicts `exam_score` from tabular student data, trains **multiple models**, and **automatically selects the best** based on validation \(highest R²\).
 
----
+It also includes a legacy Flask demo app (`app.py`) that can continue to be used independently.
 
-## 🌟 Features
+## 📦 Project structure
 
-- 📊 Predict academic performance using real-life factors
-- 🔁 Test how changing habits (like more sleep or exercise) affects scores
-- 🧠 Powered by a trained machine learning regression model
-- 🌐 Simple and clean web interface
+```
+.
+├── artifacts/
+│   ├── logs/
+│   ├── metrics.json
+│   ├── models/
+│   │   ├── best_model.pkl
+│   │   └── best_model.pt
+│   └── scaler/
+│       └── preprocessor.pkl
+├── configs/
+│   └── config.yaml
+├── data/
+│   ├── raw/
+│   │   └── students.csv
+│   └── processed/
+│       ├── train.csv
+│       ├── val.csv
+│       └── test.csv
+├── src/
+│   ├── data/
+│   ├── features/
+│   ├── models/
+│   ├── pipelines/
+│   └── utils/
+├── tests/
+├── dvc.yaml
+├── params.yaml
+├── main.py
+└── requirements.txt
+```
 
----
+## ✅ Setup
 
-## 📥 Inputs Used for Prediction
+```bash
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+```
 
-The model considers the following student information:
+## ▶️ Run (CLI)
 
-- **Student Age**
-- **Gender**
-- **Hours of Study per Day**
-- **Time Spent on Social Media**
-- **Time Spent Watching Netflix/YouTube**
-- **Has a Part-Time Job** (Yes/No)
-- **Class Attendance Percentage**
-- **Hours of Sleep per Day**
-- **Diet Quality** (Poor, Average, Good)
-- **Exercise Frequency** (Days per week)
-- **Parental Education Level** (High School, Bachelor, Master, PhD)
-- **Internet Quality** (Poor, Average, Good)
-- **Mental Health Rating** (Scale 1 to 10)
-- **Participation in Extracurricular Activities** (Yes/No)
+- **Ingest raw data** (copies from `research/` if needed):
 
----
+```bash
+python main.py ingest
+```
 
-## 📊 Project Workflow
+- **Preprocess** (split train/val/test, fit & save preprocessor):
 
-### 1️⃣ Exploratory Data Analysis (EDA)
+```bash
+python main.py preprocess
+```
 
-- **Data Cleaning**: Handled missing values and outliers.
-- **Visualization**: Explored relationships between variables using plots and correlation matrices.
-- **Insights**: Identified key factors influencing academic performance.
+- **Train + auto-select best model** (logs runs to MLflow, saves best model locally):
 
-### 2️⃣ Feature Engineering
+```bash
+python main.py train
+```
 
-- **Encoding**: Converted categorical variables using techniques like `OrdinalEncoder`.
-- **Scaling**: Normalized numerical features to improve model performance.
+- **Evaluate** (prints `artifacts/metrics.json`):
 
-### 3️⃣ Model Training
+```bash
+python main.py evaluate
+```
 
-- **Algorithm Selection**: Evaluated multiple regression models.
-- **Final Model**: Selected a **Linear Regression** model based on performance metrics.
-- **Model Saving**: Serialized the trained model using `joblib` as `model.pkl`.
+- **Predict** from a CSV:
 
-### 4️⃣ Deployment
+```bash
+python main.py predict --input data/raw/students.csv --output artifacts/predictions.csv
+```
 
-- **Web Interface**: Developed a Flask-based web application for user interaction.
-- **Local Hosting**: Configured the app to run locally with the option for future cloud deployment.
+## 🧪 Tests
 
----
+```bash
+pytest -q
+```
 
-## 📂 Dataset Reference
+## 🔬 MLflow UI
 
-The model was trained using the [Student Habits vs Academic Performance](https://www.kaggle.com/datasets/jayaantanaath/student-habits-vs-academic-performance) dataset available on Kaggle. This dataset includes various factors such as study habits, lifestyle choices, and mental health indicators that influence academic performance.
+Runs are logged under the default local `./mlruns` unless `mlflow.tracking_uri` is set in `configs/config.yaml`.
 
----
+```bash
+mlflow ui
+```
 
-## 🚀 Getting Started
+Then open `http://127.0.0.1:5000`.
 
-### 1️⃣ Clone the Repository
-    git clone https://github.com/your-username/student-score-predictor.git
-    cd student-score-predictor
+## ♻️ DVC pipeline (reproducible)
 
-### 2️⃣ (Optional) Create and Activate a Virtual Environment
-    pip install -r requirements.txt
-### 4️⃣ Run the Application
-    python app.py
-### 5️⃣ Open in Browser
-    visit :
-    http://127.0.0.1:5000
+```bash
+dvc init
+dvc repro
+```
+
+To track the raw dataset:
+
+```bash
+dvc add data/raw/students.csv
+git add data/raw/students.csv.dvc .gitignore
+```
+
+## 🧾 Model registry
+
+If enabled in `configs/config.yaml`, the best model is registered to MLflow Model Registry and optionally promoted to `Staging` or `Production`.
+
+## 🗂️ Dataset
+
+Based on the Kaggle dataset “Student Habits vs Academic Performance”.

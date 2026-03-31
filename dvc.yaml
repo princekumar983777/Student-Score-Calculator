@@ -1,0 +1,48 @@
+stages:
+  ingest:
+    cmd: python main.py ingest
+    deps:
+      - research/student_habits_performance.csv
+      - configs/config.yaml
+      - src/data/ingest.py
+      - src/utils/common.py
+      - src/utils/logger.py
+    outs:
+      - data/raw/students.csv
+
+  preprocess:
+    cmd: python main.py preprocess
+    deps:
+      - data/raw/students.csv
+      - configs/config.yaml
+      - src/pipelines/preprocessing_pipeline.py
+      - src/data/load_data.py
+      - src/data/preprocess.py
+      - src/features/build_features.py
+      - src/utils/common.py
+      - src/utils/logger.py
+    outs:
+      - data/processed/train.csv
+      - data/processed/val.csv
+      - data/processed/test.csv
+      - artifacts/scaler/preprocessor.pkl
+
+  train:
+    cmd: python main.py train
+    deps:
+      - data/processed/train.csv
+      - data/processed/val.csv
+      - data/processed/test.csv
+      - artifacts/scaler/preprocessor.pkl
+      - configs/config.yaml
+      - src/pipelines/training_pipeline.py
+      - src/models/train.py
+      - src/models/sklearn_models.py
+      - src/models/ann_model.py
+      - src/utils/metrics.py
+      - src/utils/common.py
+      - src/utils/logger.py
+    outs:
+      - artifacts/models
+      - artifacts/metrics.json
+
