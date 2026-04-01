@@ -8,3 +8,6 @@ mlflow
 dvc
 pyyaml
 pytest
+fastapi
+uvicorn[standard]
+pydantic

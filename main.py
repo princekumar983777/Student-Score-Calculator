@@ -21,7 +21,6 @@ def _cmd_preprocess(args: argparse.Namespace) -> None:
 def _cmd_ingest(args: argparse.Namespace) -> None:
     run_ingestion(config_path=args.config)
 
-
 def _cmd_train(args: argparse.Namespace) -> None:
     # Ensure preprocessing outputs exist; if not, run preprocess first.
     cfg = read_yaml(args.config)
